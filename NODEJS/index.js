@@ -20,18 +20,65 @@ const callbackdelserver= (req, res)=>{
     //obtener los headers
     const { headers={} }= req;
 //obtener payload 
-const decoder= new StringDecoder('utf-8');
-    //enviar respuesta
+const decoder= new stringdecoder('utf-8');
+let buffer= '';
+//Acumular la data
+req.on('data', (data)=>{
+buffer+= decoder.write(data);
+});
+//Terminar de acumular la data
+req.on('end', ()=>{
+    buffer+= decoder.end();
+    //Organizar la data
+    const data= {
+        ruta:rutalimpia,
+        query,
+        metodo,
+        headers,
+        payload:buffer
+    };
+
+    console.log({data});
+ //Elegir el handler de la ruta
+ let handler;
+ if(rutalimpia&&enrutador[rutalimpia]){
+     handler= enrutador[rutalimpia];
+ }
+ else{
+     handler=enrutador.noEncontrado;
+ }
+//enviar respuesta
   
-switch(rutalimpia){
-    case 'ruta':
-        res.end('Ruta conocida');
-        break;
-        default:
-            res.end('Ruta desconocida');
+if(typeof handler==='function'){
+    handler(data, (statuscod=200, mensaje)=>{
+const respuesta=JSON.stringify(mensaje);
+res.setHeader("Content-Type","application/json");
+res.writeHead(statuscod);
+
+// Respuesta al cliente
+res.end(respuesta);
+    })
 }
     
+
+});
 };
+//Ejecutar handler para enviar la respuesta
+
+
+    const enrutador={
+        ruta:(data, callback)=>{
+            callback(200,{mensaje:'Working'});
+        },
+        usuarios:(data, callback)=>{
+            callback(200,[{nombre:'user1'},
+            {nombre:'user2'},
+            {nombre:'user3'}]);
+        },
+        noEncontrado:(data, callback)=>{
+            callback(404, {mensaje:'Something went wrong'})
+        }
+    }
 const server = http.createServer(callbackdelserver);
 
 
