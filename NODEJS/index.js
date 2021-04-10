@@ -2,6 +2,15 @@ const http = require('http');
 const url = require('url');
 const stringdecoder= require('string_decoder').StringDecoder;
 
+let recursos= {
+    mascotas:[
+         {tipo:"Gato", nombre:"Felicia", duenio:"Neo"},
+         {tipo:"Gato", nombre:"Felicia", duenio:"Neo"},
+         { tipo:"Gato", nombre:"Felicia", duenio:"Neo" },
+         { tipo:"Gato", nombre:"Felicia", duenio:"Neo" }
+
+    ],
+};
 const callbackdelserver= (req, res)=>{
       //obtener url del request
   const urlactual= req.url;
@@ -70,10 +79,8 @@ res.end(respuesta);
         ruta:(data, callback)=>{
             callback(200,{mensaje:'Working'});
         },
-        usuarios:(data, callback)=>{
-            callback(200,[{nombre:'user1'},
-            {nombre:'user2'},
-            {nombre:'user3'}]);
+        mascotas:(data, callback)=>{
+            callback(200,recursos.mascotas)
         },
         noEncontrado:(data, callback)=>{
             callback(404, {mensaje:'Something went wrong'})
