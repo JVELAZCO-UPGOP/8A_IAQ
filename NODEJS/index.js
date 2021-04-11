@@ -38,6 +38,14 @@ buffer+= decoder.write(data);
 //Terminar de acumular la data
 req.on('end', ()=>{
     buffer+= decoder.end();
+
+    if(headers['content-type']==='application/json'){
+        console.log("yeah");
+        buffer=JSON.parse(buffer);
+    }
+    else{
+        console.log("nope");
+    }
     //Organizar la data
     const data= {
         ruta:rutalimpia,
@@ -50,8 +58,8 @@ req.on('end', ()=>{
     console.log({data});
  //Elegir el handler de la ruta
  let handler;
- if(rutalimpia&&enrutador[rutalimpia]){
-     handler= enrutador[rutalimpia];
+ if(rutalimpia&&enrutador[rutalimpia]&&enrutador[rutalimpia][metodo]){
+     handler= enrutador[rutalimpia][metodo];
  }
  else{
      handler=enrutador.noEncontrado;
@@ -61,7 +69,7 @@ req.on('end', ()=>{
 if(typeof handler==='function'){
     handler(data, (statuscod=200, mensaje)=>{
 const respuesta=JSON.stringify(mensaje);
-res.setHeader("Content-Type","application/json");
+res.setHeader("content-type","application/json");
 res.writeHead(statuscod);
 
 // Respuesta al cliente
@@ -76,13 +84,23 @@ res.end(respuesta);
 
 
     const enrutador={
-        ruta:(data, callback)=>{
-            callback(200,{mensaje:'Working'});
+        ruta: (data, callback)=>{
+                callback(200,{mensaje:'Working'});
+            
         },
-        mascotas:(data, callback)=>{
-            callback(200,recursos.mascotas)
+        mascotas:{
+            get: (data, callback)=>{
+                callback(200,recursos.mascotas)
+            },
+        
+        
+            post: (data, callback)=>{
+                recursos.mascotas.push(data.payload);
+                callback(201,data.payload);
+            },
         },
         noEncontrado:(data, callback)=>{
+         
             callback(404, {mensaje:'Something went wrong'})
         }
     }
