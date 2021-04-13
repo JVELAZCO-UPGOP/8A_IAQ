@@ -1,7 +1,7 @@
 const http = require('http');
 const requestHandler= require("./request-handler");
-const recursos= require("./recursos");
-global.recursos=recursos;
+
+
 
 //Ejecutar handler para enviar la respuesta
 
