@@ -6,7 +6,7 @@ const indice = document.getElementById('indice');
 const form = document.getElementById('form');
 const btnGuardar=document.getElementById('save');
 const create= document.getElementById('crear');
-
+console.log('mascotas');
 function smth()
 {
     indice.value="";
@@ -36,6 +36,8 @@ let mascotas = [
     ];
 
 function listarMascotas() {
+    console.log('Dentro de listar');
+    solicitarmascotas();
 
     const htmlMascotas = mascotas.map((mascota, index)=>`
     <tr>
@@ -91,6 +93,22 @@ function enviarDatos(evento) {
       form.onsubmit= enviarDatos;
       listarMascotas();
 
+   function solicitarmascotas(){
+       console.log('Dentro de solicitar');
+          fetch('http://localhost:5000/mascotas').then((respuesta)=>{
+                if(respuesta.ok){
+                    console.log(' dentro de respuesta');
+
+                    return respuesta.json();
+
+
+                }
+          })
+          .then(mascotasdelserver=>{
+            console.log({mascotasdelserver})
+          });
+      }
+
       btnGuardar.onclick= enviarDatos;
 
       function editar(index){
@@ -129,6 +147,8 @@ function enviarDatos(evento) {
 
             mascotas= mascotas.filter(((mascota,indicemascota)=>indicemascota!==index));
             listarMascotas();
+
+
           }
          
       }
