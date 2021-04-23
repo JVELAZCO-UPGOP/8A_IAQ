@@ -22,22 +22,17 @@ function smth()
 
 console.log("working");
 let veterinarios=[
-    {
-        
-        nombre: "Alberto",
-        apellido: "Ocoa",
-        pais: "Colombia",
-        identificacion: "8711453269"
-    },
-    {
-        nombre: "Fernando ",
-        apellido: "Villa",
-        pais: "Otro",
-        identificacion: "614529874"
-    }
+    
 ];
 
-function listarVeterinarios() {
+async function listarVeterinarios() {
+    try{
+        const respuesta = await fetch(url);
+        const veterinariasDelServer = await respuesta.json();
+        if (Array.isArray(veterinariasDelServer)) {
+          veterinarias = veterinariasDelServer;
+        }
+        if (veterinarias.length > 0) {
     const htmVeterinarios =veterinarios.map((veterinario, index)=>`<tr>
     <th scope="row">${index}</th>
     <td>${veterinario.identificacion}</td>
@@ -55,10 +50,21 @@ function listarVeterinarios() {
 listaVeterinarios.innerHTML = htmVeterinarios;
 Array.from(document.getElementsByClassName('editar')).forEach((botonEditar, index)=> botonEditar.onclick= editar(index));
 Array.from(document.getElementsByClassName('eliminar')).forEach((botonEliminar, index)=> botonEliminar.onclick= eliminar(index));
+return;
 }
 
-function enviarDatos(evento) {
+listaVeterinarias.innerHTML = `<tr>
+    <td colspan="5" class="lista-vacia">No hay veterinarias</td>
+  </tr>`;
+  } catch (error) {
+    console.log({ error });
+    $(".alert").show();
+  }
+}
+async function enviarDatos(evento) {
     evento.preventDefault();
+    try{
+   
     const datos = {
         nombre: nombre.value,
         apellido: apellido.value,
@@ -66,19 +72,30 @@ function enviarDatos(evento) {
         identificacion: identificacion.value                                                                                                      
     };
     const accion = btnGuardar.innerHTML;
-    switch(accion){
-        case 'Editar':
-            //Editar
-            veterinarios[indice.value] = datos;
-            break;
-            default:
-                //crear
-                veterinarios.push(datos);
-                break;
+    let urlEnvio = url;
+    let method = "POST";
+    if (accion === "Editar") {
+      urlEnvio += `/${indice.value}`;
+      method = "PUT";
     }
-listarVeterinarios();
-resetModal();
-}
+    const respuesta = await fetch(urlEnvio, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(datos),
+        mode: "cors",
+      });
+      if (respuesta.ok) {
+        listarVeterinarios();
+        resetModal();
+      }
+    } catch (error) {
+      console.log({ error });
+      $(".alert").show();
+    }
+  }
+  
 function editar(index){
     return function cuandoHagaClick (){
     btnGuardar.innerHTML = 'Editar'
@@ -90,7 +107,7 @@ function editar(index){
     identificacion.value = veterinario.identificacion;
     indice.value = index;
     
-    }
+    };
 }
 
 function resetModal(){
@@ -101,15 +118,24 @@ function resetModal(){
     indice.value ='';
     btnGuardar.innerHTML ='Crear'
 }
-function eliminar(index){
-    return function clickenEliminar(){
-        
-        veterinarios = veterinarios.filter((veterinario, indiceveterinario)=>indiceveterinario !==index);
-        listarVeterinarios();
-    }
-    
-
-}
+function eliminar(index) {
+    const urlEnvio = `${url}/${index}`;
+    return async function clickEnEliminar() {
+      try {
+        const respuesta = await fetch(urlEnvio, {
+          method: "DELETE",
+          mode: "cors",
+        });
+        if (respuesta.ok) {
+          listarVeterinarias();
+        }
+      } catch (error) {
+        console.log({ error });
+        $(".alert").show();
+      }
+    };
+  }
+  
 
 listarVeterinarios();
 

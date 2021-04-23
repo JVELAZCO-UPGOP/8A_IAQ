@@ -6,6 +6,7 @@ const indice = document.getElementById('indice');
 const form = document.getElementById('form');
 const btnGuardar=document.getElementById('save');
 const create= document.getElementById('crear');
+const url = "http://localhost:5000/mascotas";
 console.log('mascotas');
 function smth()
 {
@@ -21,23 +22,23 @@ function smth()
 
 
 let mascotas = [
-    {
-        tipo: "Gato",
-        nombre: "Felicia",
-        duenio:"Neo"
-    },
-
-    {
-        tipo: "Gato",
-        nombre: "Nairobi",
-        duenio:"Neo"
-    }
-
+    
     ];
 
-function listarMascotas() {
+async function listarMascotas() {
+    console.log("Dentro de listar");
+    try{
+        const respuesta = await fetch(url);
+        console.log({'respuesta': respuesta})
+        const mascotasDelServer = await respuesta.json();
+        if (Array.isArray(mascotasDelServer)) {
+            mascotas = mascotasDelServer;
+          }
+
+          if (mascotas.length > 0) {
+            
     console.log('Dentro de listar');
-    solicitarmascotas();
+   
 
     const htmlMascotas = mascotas.map((mascota, index)=>`
     <tr>
@@ -54,60 +55,69 @@ function listarMascotas() {
                         </div>
                     </td>
                 </tr>`).join("");
-    listaMascotas.innerHTML = htmlMascotas;
-    Array.from(document.getElementsByClassName('editar')).forEach((botonEditar, index)=>botonEditar.onclick = editar(index));
-    Array.from(document.getElementsByClassName('eliminar')).forEach((botonEliminar, index)=>botonEliminar.onclick = eliminar(index));
-
+      listaMascotas.innerHTML = htmlMascotas;
+      Array.from(document.getElementsByClassName("editar")).forEach(
+        (botonEditar, index) => (botonEditar.onclick = editar(index))
+      );
+      Array.from(document.getElementsByClassName("eliminar")).forEach(
+        (botonEliminar, index) => (botonEliminar.onclick = eliminar(index))
+      );
+      return;
+    }
+    listaMascotas.innerHTML = `<tr>
+        <td colspan="5" class="lista-vacia">No hay mascotas</td>
+      </tr>`;
+  } catch (error) {
+    console.log({ error });
+   
   }
-
-
-function enviarDatos(evento) {
+}
+async function enviarDatos(evento) {
     
     evento.preventDefault();
+    try{
 
-    const data = {
+    const datos = {
         tipo: tipo.value,
         nombre: nombre.value,
         duenio: dueno.value
         
         };
-
+        let method = "POST";
+    let urlEnvio = url;
         const acc= btnGuardar.innerHTML;
         alert( acc)
-        switch(acc){
-            case 'Editar':
-                mascotas[indice.value]=data;
-                alert("Se ha modificado correctamente");
-
-            break;
-            default:
-                mascotas.push(data);
-                alert("Se ha creado correctamente");
-                break;
-
+        if (acc === "Editar") {
+            method = "PUT";
+            mascotas[indice.value] = datos;
+            urlEnvio = `${url}/${indice.value}`;
+          }
+          const respuesta = await fetch(urlEnvio, {
+            method,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(datos),
+            mode: "cors",
+          });
+          if (respuesta.ok) {
+            listarMascotas();
+            resetModal();
+          }
+        } catch (error) {
+          console.log({ error });
+          $(".alert").show();
         }
+      }
+      
 
       
-        listarMascotas();
-      }
+        
+      
       form.onsubmit= enviarDatos;
       listarMascotas();
 
-   function solicitarmascotas(){
-       console.log('Dentro de solicitar');
-          fetch('http://localhost:5000/mascotas').then((respuesta)=>{
-                if(respuesta.ok){
-                    console.log(' dentro de respuesta');
-
-                    return respuesta.json();
-
-
-                }
-          })
-          .then(mascotasdelserver=>{
-            console.log({mascotasdelserver})
-          });
-      }
+   
 
       btnGuardar.onclick= enviarDatos;
 
@@ -139,16 +149,22 @@ function enviarDatos(evento) {
           duenio.value="";
       }
 
-      function eliminar(index){
-          
-          return function deletethis(){
-            
-            console.log(index);
-
-            mascotas= mascotas.filter(((mascota,indicemascota)=>indicemascota!==index));
-            listarMascotas();
-
-
-          }
+     
          
+      function eliminar(index) {
+        const urlEnvio = `${url}/${index}`;
+        return async function clickEnEliminar() {
+          try {
+            const respuesta = await fetch(urlEnvio, {
+              method: "DELETE",
+            });
+            if (respuesta.ok) {
+              listarMascotas();
+              resetModal();
+            }
+          } catch (error) {
+            console.log({ error });
+            $(".alert").show();
+          }
+        };
       }

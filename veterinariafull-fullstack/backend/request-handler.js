@@ -15,7 +15,18 @@ console.log(ruta);
   const rutalimpia= replace= ruta.replace(/^\/+|\/+$/g, '' );
   //obtener el metodo http
   const metodo= req.method.toLowerCase();
-  
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "OPTIONS, GET, PUT, DELETE, POST"
+  );
+  if(metodo==='options') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   //obtener variables del query url
   const { query={} }= urlparseada;
   //obtener los headers
@@ -76,7 +87,7 @@ res.writeHead(statuscod);
 
 // Respuesta al cliente
 res.end(respuesta);
-  })
+  });
 }
   
 

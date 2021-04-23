@@ -21,18 +21,7 @@ function smth()
 
 
 let mascotas = [
-    {
-        tipo: "Gato",
-        nombre: "Felicia",
-        duenio:"Neo"
-    },
-
-    {
-        tipo: "Gato",
-        nombre: "Nairobi",
-        duenio:"Neo"
-    }
-
+   
     ];
 
 function listarMascotas() {

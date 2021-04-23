@@ -47,8 +47,8 @@ module.exports= function vetsHandler(vets){
             return callback(404, {mensaje:"indice no encontrado"});
             }
             callback(400, {mensaje:"Indice no encontrado"});
-        }
-    }
+        },
+    };
 
-}
+};
 
