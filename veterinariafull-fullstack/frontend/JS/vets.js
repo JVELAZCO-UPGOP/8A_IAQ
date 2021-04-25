@@ -7,7 +7,7 @@ const form= document.getElementById('form');
 const indice= document.getElementById('indice');
 const btnGuardar=document.getElementById('btn-guardar');
 const newvet=document.getElementById('newvet');
-const url = "http://localhost:5000/veterinarios";
+const url = "https://veterinaria-backend-ten-kohl.vercel.app/veterinarios";
 
 function smth()
 {
@@ -28,17 +28,17 @@ let veterinarios=[
 
 async function listarVeterinarios() {
     try{
-        const respuesta = await fetch("http://localhost:5000/veterinarios");
+        const respuesta = await fetch("https://veterinaria-backend-fpcrh325m-neoaq.vercel.app/veterinarios");
        
         const veterinariasDelServer = await respuesta.json();
         if (Array.isArray(veterinariasDelServer)) {
          
-          veterinarias = veterinariasDelServer;
+          veterinarios = veterinariasDelServer;
         }
-        if (veterinarias.length > 0) {
+        if (veterinarios.length > 0) {
           console.log("Si jaló");
           
-    const htmVeterinarios =veterinarias.map((veterinaria, index)=>`<tr>
+    const htmVeterinarios =veterinarios.map((veterinaria, index)=>`<tr>
     <th scope="row">${index}</th>
     <td>${veterinaria.id}</td>
     <td>${veterinaria.pais}</td>
@@ -59,7 +59,7 @@ return;
 }
 
 listaVeterinarios.innerHTML = `<tr>
-    <td colspan="5" class="lista-vacia">No hay veterinarias</td>
+    <td colspan="5" class="lista-vacia">No hay veterinarios</td>
   </tr>`;
   } catch (error) {
     console.log({ error });
@@ -81,6 +81,7 @@ async function enviarDatos(evento) {
     let method = "POST";
     if (accion === "Editar") {
       urlEnvio += `/${indice.value}`;
+      alert(indice.value);
       method = "PUT";
     }
     const respuesta = await fetch(urlEnvio, {

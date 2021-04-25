@@ -6,7 +6,7 @@ const apellido= document.getElementById('apellido');
 const form= document.getElementById('form');
 const indice= document.getElementById('indice');
 const btnGuardar=document.getElementById('btn-guardar');
-const url = "http://localhost:5000/duenios";
+const url = "https://veterinaria-backend-ten-kohl.vercel.app/duenios";
 
 let duenos=[
     //Empty object
@@ -15,7 +15,7 @@ let duenos=[
 async function listarDuenios() {
     try{
       console.log('Dentro del try');
-        const respuesta = await fetch("http://localhost:5000/duenios");
+        const respuesta = await fetch("https://veterinaria-backend-ten-kohl.vercel.app/duenios");
     const duenosDelServer = await respuesta.json();
     if (Array.isArray(duenosDelServer)) {
       duenos = duenosDelServer;

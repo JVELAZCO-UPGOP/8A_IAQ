@@ -6,7 +6,7 @@ const indice = document.getElementById('indice');
 const form = document.getElementById('form');
 const btnGuardar=document.getElementById('save');
 const create= document.getElementById('crear');
-const url = "http://localhost:5000/mascotas";
+const url = "https://veterinaria-backend-ten-kohl.vercel.app/mascotas";
 console.log('mascotas');
 function smth()
 {
