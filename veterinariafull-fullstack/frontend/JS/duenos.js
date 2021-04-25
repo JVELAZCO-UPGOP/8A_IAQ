@@ -6,7 +6,7 @@ const apellido= document.getElementById('apellido');
 const form= document.getElementById('form');
 const indice= document.getElementById('indice');
 const btnGuardar=document.getElementById('btn-guardar');
-
+const url = "http://localhost:5000/duenios";
 
 let duenos=[
     //Empty object
@@ -14,13 +14,14 @@ let duenos=[
 
 async function listarDuenios() {
     try{
-
-        const respuesta = await fetch(url);
+      console.log('Dentro del try');
+        const respuesta = await fetch("http://localhost:5000/duenios");
     const duenosDelServer = await respuesta.json();
     if (Array.isArray(duenosDelServer)) {
       duenos = duenosDelServer;
     }
-    if (duenios.length > 0) {
+    if (duenos.length > 0) {
+      console.log(duenos);
     const htmlDuenos =duenos.map(
         (dueno, index)=>`<tr>
     <th scope="row">${index}</th>
@@ -78,7 +79,7 @@ async function enviarDatos(evento) {
       mode: "cors",
     });
     if (respuesta.ok) {
-      listarDuenos();
+      listarDuenios();
       resetModal();
     }
   } catch (error) {
@@ -113,6 +114,7 @@ function resetModal(){
     btnGuardar.innerHTML ='Crear'
 }
 function eliminar(index) {
+  console.log('Dentro de eliminar');
     const urlEnvio = `${url}/${index}`;
     return async function clickEnEliminar() {
       try {
@@ -121,7 +123,7 @@ function eliminar(index) {
           mode: "cors",
         });
         if (respuesta.ok) {
-          listarDuenos();
+          listarDuenios();
         }
       } catch (error) {
         console.log({ error });

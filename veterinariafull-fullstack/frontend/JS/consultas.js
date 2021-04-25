@@ -11,7 +11,7 @@ let consultas = [];
 let mascotas = [];
 let veterinarias = [];
 
-const url = "http://localhost:5000";
+const url = "http://localhost:5000/";
 
 async function listarConsultas() {
   const entidad = "consultas";

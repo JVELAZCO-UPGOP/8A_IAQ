@@ -7,6 +7,7 @@ const form= document.getElementById('form');
 const indice= document.getElementById('indice');
 const btnGuardar=document.getElementById('btn-guardar');
 const newvet=document.getElementById('newvet');
+const url = "http://localhost:5000/veterinarios";
 
 function smth()
 {
@@ -27,18 +28,22 @@ let veterinarios=[
 
 async function listarVeterinarios() {
     try{
-        const respuesta = await fetch(url);
+        const respuesta = await fetch("http://localhost:5000/veterinarios");
+       
         const veterinariasDelServer = await respuesta.json();
         if (Array.isArray(veterinariasDelServer)) {
+         
           veterinarias = veterinariasDelServer;
         }
         if (veterinarias.length > 0) {
-    const htmVeterinarios =veterinarios.map((veterinario, index)=>`<tr>
+          console.log("Si jaló");
+          
+    const htmVeterinarios =veterinarias.map((veterinaria, index)=>`<tr>
     <th scope="row">${index}</th>
-    <td>${veterinario.identificacion}</td>
-    <td>${veterinario.pais}</td>
-    <td>${veterinario.nombre}</td>
-    <td>${veterinario.apellido}</td>
+    <td>${veterinaria.id}</td>
+    <td>${veterinaria.pais}</td>
+    <td>${veterinaria.nombre}</td> 
+    <td>${veterinaria.apellido}</td>
     <td>
         <div class="btn-group" role="group" aria-label="Basic example">
         <button type="button" class="btn btn-info editar"><i class="fas fa-edit"></i></button>
@@ -53,7 +58,7 @@ Array.from(document.getElementsByClassName('eliminar')).forEach((botonEliminar, 
 return;
 }
 
-listaVeterinarias.innerHTML = `<tr>
+listaVeterinarios.innerHTML = `<tr>
     <td colspan="5" class="lista-vacia">No hay veterinarias</td>
   </tr>`;
   } catch (error) {
@@ -127,7 +132,7 @@ function eliminar(index) {
           mode: "cors",
         });
         if (respuesta.ok) {
-          listarVeterinarias();
+          listarVeterinarios();
         }
       } catch (error) {
         console.log({ error });
