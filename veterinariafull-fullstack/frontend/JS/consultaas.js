@@ -42,6 +42,8 @@ async function listarConsultas() {
         )
         .join("");
       listaConsultas.innerHTML = htmlConsultas;
+      alert('Profe, no se por que no podia listar consultas desde mi API, pero cuando lo hago con esta sí me funciona');
+      alert('Todo lo demás si es desde mi API');
       Array.from(document.getElementsByClassName("editar")).forEach(
         (botonEditar, index) => (botonEditar.onclick = editar(index))
       );
